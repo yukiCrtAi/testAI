@@ -20,11 +20,11 @@ class BaseScraper(ABC):
             config_path (str): 設定ファイルのパス
         """
         self.config_path = config_path
+        self._setup_logging()  # 先にロギングを設定
         self.config = self._load_config()
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         }
-        self._setup_logging()
 
     def _setup_logging(self):
         """ロギングの設定"""
