@@ -1,15 +1,18 @@
 from typing import List, Dict, Optional
 from datetime import datetime
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 import time
 from urllib3.exceptions import InsecureRequestWarning
 import urllib3
-from .base import BaseScraper
-from ..utils.date_utils import DateUtils
+import warnings
+from src.scrapers.base import BaseScraper
+from src.utils.date_utils import DateUtils
 
 # SSL証明書の警告を無効化
 urllib3.disable_warnings(InsecureRequestWarning)
+# XML警告を無効化
+warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
 class RSSScaper(BaseScraper):
     """RSSフィードからニュース記事を取得するスクレイパー"""
@@ -157,7 +160,8 @@ class RSSScaper(BaseScraper):
             return []
 
         try:
-            soup = BeautifulSoup(content, 'html.parser')
+            # XMLパーサーを使用
+            soup = BeautifulSoup(content, 'xml')
             items = []
             
             for item in soup.find_all(rules.get('article_selector', 'item')):
@@ -181,7 +185,32 @@ class RSSScaper(BaseScraper):
             
         except Exception as e:
             self.logger.error(f"フィードのパース中にエラー: {e}")
-            return []
+            # XMLパーサーが失敗した場合、HTMLパーサーでフォールバック
+            try:
+                soup = BeautifulSoup(content, 'html.parser')
+                items = []
+                
+                for item in soup.find_all(rules.get('article_selector', 'item')):
+                    try:
+                        title = item.find(rules.get('title_selector', 'title'))
+                        link = item.find(rules.get('link_selector', 'link'))
+                        date = item.find(rules.get('date_selector', 'pubDate'))
+                        
+                        if title and link:
+                            items.append({
+                                'title': title.get_text(strip=True),
+                                'link': link.get('href') or link.get_text(strip=True),
+                                'date': date.get_text(strip=True) if date else ''
+                            })
+                            
+                    except Exception as e:
+                        self.logger.warning(f"記事のパース中にエラー: {e}")
+                        continue
+                        
+                return items
+            except Exception as e:
+                self.logger.error(f"HTMLパーサーでのパースも失敗: {e}")
+                return []
 
     def _validate_article(self, article: Dict) -> bool:
         """

@@ -1,6 +1,12 @@
 @echo off
 setlocal enabledelayedexpansion
 
+REM カレントディレクトリをスクリプトの場所に設定
+pushd %~dp0
+
+REM PYTHONPATHの設定
+set PYTHONPATH=%CD%
+
 REM Pythonスクリプトのパス
 set SCRIPT_PATH=src\main.py
 
@@ -24,7 +30,7 @@ if "%COMMAND%"=="search" (
         echo 検索キーワードを指定してください。
         exit /b 1
     )
-    python %SCRIPT_PATH% search %*
+    python "%SCRIPT_PATH%" search "%ARG1%"
 ) else if "%COMMAND%"=="add" (
     if "%ARG1%"=="" (
         echo サイト名を指定してください。
@@ -34,7 +40,7 @@ if "%COMMAND%"=="search" (
         echo URLを指定してください。
         exit /b 1
     )
-    python %SCRIPT_PATH% add %ARG1% %ARG2%
+    python "%SCRIPT_PATH%" add "%ARG1%" "%ARG2%"
 ) else if "%COMMAND%"=="del" (
     if "%ARG1%"=="" (
         echo サイト名を指定してください。
@@ -44,11 +50,13 @@ if "%COMMAND%"=="search" (
         echo URLを指定してください。
         exit /b 1
     )
-    python %SCRIPT_PATH% del %ARG1% %ARG2%
+    python "%SCRIPT_PATH%" del "%ARG1%" "%ARG2%"
 ) else (
     echo 無効なコマンドです: %COMMAND%
     echo 使用可能なコマンド: search, add, del
     exit /b 1
 )
 
+REM 元のディレクトリに戻る
+popd
 endlocal
