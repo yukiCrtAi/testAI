@@ -3,9 +3,9 @@ from datetime import datetime
 import sys
 import logging
 from typing import Optional, Tuple
-from scrapers.rss import RSSScaper
-from utils.date_utils import DateUtils
-from utils.output import OutputManager
+from src.scrapers.rss import RSSScaper
+from src.utils.date_utils import DateUtils
+from src.utils.output import OutputManager
 
 def setup_logging():
     """ロギングの設定"""

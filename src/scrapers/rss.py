@@ -5,8 +5,8 @@ from bs4 import BeautifulSoup
 import time
 from urllib3.exceptions import InsecureRequestWarning
 import urllib3
-from .base import BaseScraper
-from ..utils.date_utils import DateUtils
+from src.scrapers.base import BaseScraper
+from src.utils.date_utils import DateUtils
 
 # SSL証明書の警告を無効化
 urllib3.disable_warnings(InsecureRequestWarning)

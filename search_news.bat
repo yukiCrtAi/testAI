@@ -1,6 +1,12 @@
 @echo off
 setlocal enabledelayedexpansion
 
+REM カレントディレクトリをスクリプトの場所に設定
+cd /d %~dp0
+
+REM PYTHONPATHの設定
+set PYTHONPATH=%CD%;%PYTHONPATH%
+
 REM Pythonスクリプトのパス
 set SCRIPT_PATH=src\main.py
 
