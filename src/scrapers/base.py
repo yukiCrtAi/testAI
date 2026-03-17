@@ -175,23 +175,29 @@ class BaseScraper(ABC):
             self.logger.error(f"サイト追加に失敗: {e}")
             return False
 
-    def delete_site(self, name: str, url: str) -> bool:
+    def delete_site(self, name: str, url: Optional[str] = None) -> bool:
         """
         サイトの削除
-        
+
         Args:
             name (str): サイト名
-            url (str): サイトのURL
-            
+            url (Optional[str]): サイトのURL（省略時は名前のみで一致）
+
         Returns:
             bool: 削除に成功した場合True
         """
         try:
             original_count = len(self.config['sites'])
-            self.config['sites'] = [
-                site for site in self.config['sites']
-                if not (site['name'] == name and site['url'] == url)
-            ]
+            if url:
+                self.config['sites'] = [
+                    site for site in self.config['sites']
+                    if not (site['name'] == name and site['url'] == url)
+                ]
+            else:
+                self.config['sites'] = [
+                    site for site in self.config['sites']
+                    if site['name'] != name
+                ]
             
             if len(self.config['sites']) == original_count:
                 self.logger.warning(f"指定されたサイトが見つかりません: {name}")

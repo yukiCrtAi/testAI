@@ -14,7 +14,7 @@ if "%COMMAND%"=="" (
     echo 使用方法:
     echo   search_news.bat search "検索キーワード" [--start-date YYYY-MM-DD] [--end-date YYYY-MM-DD]
     echo   search_news.bat add "サイト名" "URL"
-    echo   search_news.bat del "サイト名" "URL"
+    echo   search_news.bat del "サイト名" ["URL"]
     exit /b 1
 )
 
@@ -41,10 +41,10 @@ if "%COMMAND%"=="search" (
         exit /b 1
     )
     if "%ARG2%"=="" (
-        echo URLを指定してください。
-        exit /b 1
+        python %SCRIPT_PATH% del %ARG1%
+    ) else (
+        python %SCRIPT_PATH% del %ARG1% %ARG2%
     )
-    python %SCRIPT_PATH% del %ARG1% %ARG2%
 ) else (
     echo 無効なコマンドです: %COMMAND%
     echo 使用可能なコマンド: search, add, del

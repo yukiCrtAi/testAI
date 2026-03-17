@@ -11,13 +11,13 @@ from ..utils.date_utils import DateUtils
 # SSL証明書の警告を無効化
 urllib3.disable_warnings(InsecureRequestWarning)
 
-class RSSScaper(BaseScraper):
+class RSSScraper(BaseScraper):
     """RSSフィードからニュース記事を取得するスクレイパー"""
-    
+
     def __init__(self, config_path: str = 'config/sites.json'):
         """
         RSSスクレイパーの初期化
-        
+
         Args:
             config_path (str): 設定ファイルのパス
         """
@@ -157,7 +157,7 @@ class RSSScaper(BaseScraper):
             return []
 
         try:
-            soup = BeautifulSoup(content, 'html.parser')
+            soup = BeautifulSoup(content, 'xml')
             items = []
             
             for item in soup.find_all(rules.get('article_selector', 'item')):
