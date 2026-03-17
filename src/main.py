@@ -3,7 +3,7 @@ from datetime import datetime
 import sys
 import logging
 from typing import Optional, Tuple
-from scrapers.rss import RSSScaper
+from scrapers.rss import RSSScraper
 from utils.date_utils import DateUtils
 from utils.output import OutputManager
 
@@ -68,7 +68,7 @@ def search_news(args: argparse.Namespace, logger: logging.Logger):
         logger (logging.Logger): ロガー
     """
     date_utils = DateUtils()
-    scraper = RSSScaper()
+    scraper = RSSScraper()
     output_manager = OutputManager()
     
     try:
@@ -97,7 +97,7 @@ def add_site(args: argparse.Namespace, logger: logging.Logger):
         args (argparse.Namespace): コマンドライン引数
         logger (logging.Logger): ロガー
     """
-    scraper = RSSScaper()
+    scraper = RSSScraper()
     try:
         if scraper.add_site(args.name, args.url):
             logger.info(f"サイトを追加しました: {args.name}")
@@ -116,9 +116,9 @@ def delete_site(args: argparse.Namespace, logger: logging.Logger):
         args (argparse.Namespace): コマンドライン引数
         logger (logging.Logger): ロガー
     """
-    scraper = RSSScaper()
+    scraper = RSSScraper()
     try:
-        if scraper.delete_site(args.name, args.url):
+        if scraper.delete_site(args.name, getattr(args, 'url', None)):
             logger.info(f"サイトを削除しました: {args.name}")
         else:
             logger.error("サイトの削除に失敗しました")
@@ -149,7 +149,7 @@ def main():
     # サイト削除コマンド
     del_parser = subparsers.add_parser('del', help='サイトを削除')
     del_parser.add_argument('name', help='サイト名')
-    del_parser.add_argument('url', help='サイトのURL')
+    del_parser.add_argument('url', nargs='?', default=None, help='サイトのURL（省略時は名前のみで削除）')
     
     args = parser.parse_args()
     
